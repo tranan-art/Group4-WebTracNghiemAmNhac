@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Tập Lý Thuyết Âm Nhạc Cơ Bản</title>
+    <style>
+        :root {
+            --primary: #007bff;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --bg: #f4f7f6;
+            --card: #ffffff;
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1, h2, h3 { text-align: center; color: var(--primary); }
+        
+        .screen { display: none; animation: fadeIn 0.5s; }
+        .active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Nút bấm */
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.3s;
+            margin: 10px 5px;
+            box-shadow: 0 4px 6px rgba(0,123,255,0.2);
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 8px rgba(0,123,255,0.3); }
+        .btn-restart { background: #6c757d; box-shadow: none; }
+        .btn-restart:hover { background: #5a6268; }
+
+        /* Câu hỏi */
+        .question-box {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background: #fff;
+        }
+        .question-header {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        .section-title {
+            background: #e7f1ff;
+            color: #0056b3;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin: 30px 0 15px 0;
+            font-weight: bold;
+            border-left: 4px solid var(--primary);
+        }
+
+        .options label {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #dee2e6;
+        }
+        .options label:hover { background: #e9ecef; border-color: #ced4da; }
+        .options input { margin-right: 15px; transform: scale(1.2); }
+        .options label.selected { background: #e3f2fd; border-color: #80bdff; font-weight: 500; }
+
+        /* Thanh thông tin */
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #343a40;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Kết quả */
+        .result-summary { text-align: center; margin-bottom: 40px; }
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            background: conic-gradient(var(--primary) 0%, #e9ecef 0%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        .score-inner {
+            width: 130px;
+            height: 130px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .score-number { font-size: 2.5em; font-weight: bold; color: var(--primary); line-height: 1; }
+        .score-total { font-size: 1em; color: #6c757d; }
+        
+        .feedback-box {
+            padding: 20px;
+            border-radius: 8px;
+            background: #eef;
+            margin: 20px 0;
+            border-left: 5px solid var(--primary);
+            text-align: left;
+        }
+
+        /* Review sai */
+        .review-item {
+            border: 1px solid #ffdadd;
+            border-left: 5px solid var(--danger);
+            padding: 15px;
+            background: #fff5f5;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .review-question { font-weight: bold; margin-bottom: 8px; color: #333; }
+        .ans-row { margin: 5px 0; }
+        .your-ans { color: var(--danger); font-weight: bold; }
+        .correct-ans { color: var(--success); font-weight: bold; }
+        .explanation { 
+            margin-top: 10px; 
+            font-size: 0.95em; 
+            color: #555; 
+            background: rgba(255,255,255,0.7); 
+            padding: 10px; 
+            border-radius: 4px;
+            border: 1px dashed #ccc;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .info-bar { flex-direction: column; gap: 10px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="start-screen" class="screen active">
+        <h1>🎵 Ôn Tập Lý Thuyết Âm Nhạc</h1>
+        <p style="text-align: center; font-size: 1.1em; color: #666;">
+            Bài kiểm tra gồm <b>40 câu hỏi</b> trắc nghiệm bao phủ các kiến thức về:<br>
+            Thuộc tính âm thanh, Ký âm, Quãng, Nhịp điệu và Thuật ngữ âm nhạc.
+        </p>
+        
+        <div style="text-align: center; margin-top: 40px;">
+            <div style="font-size: 3em; margin-bottom: 20px;">🎼</div>
+            <button class="btn" onclick="startQuiz()">Bắt đầu làm bài</button>
+        </div>
+    </div>
+
+    <div id="quiz-screen" class="screen">
+        <div class="info-bar">
+            <span id="question-progress">Tiến độ: 0/40</span>
+            <span id="timer">⏱️ 00:00</span>
+        </div>
+        
+        <div id="quiz-container">
+            </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn" id="submit-btn" onclick="submitQuiz()">Nộp bài thi</button>
+        </div>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <h2>Kết Quả Đánh Giá</h2>
+        
+        <div class="result-summary">
+            <div class="score-circle" id="score-circle-graphic">
+                <div class="score-inner">
+                    <span class="score-number" id="final-score">0</span>
+                    <span class="score-total">/ 40</span>
+                </div>
+            </div>
+            <h3 id="result-text"></h3>
+            
+            <div class="feedback-box">
+                <h4>📝 Nhận xét & Lời khuyên:</h4>
+                <p id="advice-text"></p>
+            </div>
+        </div>
+
+        <div id="review-section">
+            <h3 style="border-bottom: 2px solid #ddd; padding-bottom: 10px; text-align: left;">
+                🔍 Xem lại các câu trả lời sai:
+            </h3>
+            <div id="wrong-answers-list"></div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <button class="btn btn-restart" onclick="location.reload()">Làm lại đề này</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- DỮ LIỆU 40 CÂU HỎI ---
+    const quizData = [
+        // I. Kiến thức về Âm thanh và Thuộc tính
+        { section: "I. Kiến thức về Âm thanh và Thuộc tính", q: "Âm thanh có tính nhạc khác với tiếng động (tạp âm) ở điểm nào?", o: ["Có tần số dao động đều đặn, xác định được cao độ", "Có cường độ rất lớn", "Không có tần số ổn định", "Do thiên nhiên tạo ra"], a: 0 },
+        { section: "I. Kiến thức về Âm thanh và Thuộc tính", q: "Bốn thuộc tính cơ bản của âm thanh có tính nhạc là gì?", o: ["Cao độ, Trường độ, Cường độ, Giai điệu", "Cao độ, Trường độ, Cường độ, Âm sắc", "Cao độ, Nhịp độ, Cường độ, Âm sắc", "Trường độ, Cường độ, Hòa thanh, Âm sắc"], a: 1 },
+        { section: "I. Kiến thức về Âm thanh và Thuộc tính", q: "Cao độ của âm thanh phụ thuộc vào yếu tố vật lý nào?", o: ["Biên độ dao động", "Thời gian dao động", "Tần số dao động", "Hình thái làn sóng"], a: 2 },
+        { section: "I. Kiến thức về Âm thanh và Thuộc tính", q: "Đơn vị dùng để đo tần số dao động của âm thanh là gì?", o: ["Decibel (Db)", "Hertz (Hz)", "Volt (V)", "Ampere (A)"], a: 1 },
+        { section: "I. Kiến thức về Âm thanh và Thuộc tính", q: "Tai người có khả năng phân biệt được những âm có độ cao trong khoảng nào?", o: ["Từ 16Hz đến 20000Hz", "Từ 27.5Hz đến 4186Hz", "Từ 50Hz đến 1000Hz", "Từ 20Hz đến 2000Hz"], a: 1 },
+        { section: "I. Kiến thức về Âm thanh và Thuộc tính", q: "Độ mạnh (Cường độ) của âm thanh phụ thuộc vào yếu tố nào?", o: ["Tần số dao động", "Biên độ dao động (tầm cữ dao động)", "Thành phần âm bồi", "Thời gian dao động"], a: 1 },
+        { section: "I. Kiến thức về Âm thanh và Thuộc tính", q: "Âm sắc (màu sắc của âm thanh) phụ thuộc vào yếu tố nào?", o: ["Độ to nhỏ của âm thanh", "Thành phần các âm cục bộ (âm bồi) có trong âm thanh đó", "Tốc độ của bản nhạc", "Vị trí nốt nhạc trên khuông"], a: 1 },
+        { section: "I. Kiến thức về Âm thanh và Thuộc tính", q: "Hệ thống âm thanh đầy đủ trong âm nhạc gồm bao nhiêu âm khác nhau?", o: ["12 âm", "50 âm", "88 âm", "100 âm"], a: 2 },
+        { section: "I. Kiến thức về Âm thanh và Thuộc tính", q: "Trong tài liệu này, âm Si được ký hiệu bằng chữ cái gì?", o: ["H", "B", "S", "Si"], a: 1 },
+        { section: "I. Kiến thức về Âm thanh và Thuộc tính", q: "Nốt La ở quãng tám thứ nhất (A4) có tần số chuẩn là bao nhiêu?", o: ["432 Hz", "440 Hz", "256 Hz", "512 Hz"], a: 1 },
+
+        // II. Ký âm và Khuông nhạc
+        { section: "II. Ký âm và Khuông nhạc", q: "Khuông nhạc bao gồm mấy dòng kẻ và mấy khe?", o: ["4 dòng kẻ, 3 khe", "5 dòng kẻ, 4 khe", "6 dòng kẻ, 5 khe", "5 dòng kẻ, 5 khe"], a: 1 },
+        { section: "II. Ký âm và Khuông nhạc", q: "Quy tắc viết đuôi nốt nhạc nào sau đây là đúng?", o: ["Luôn quay lên", "Luôn quay xuống", "Dưới dòng 3 quay lên, trên dòng 3 quay xuống", "Dưới dòng 3 quay xuống, trên dòng 3 quay lên"], a: 2 },
+        { section: "II. Ký âm và Khuông nhạc", q: "Khóa Sol xác định nốt Sol nằm ở dòng kẻ thứ mấy?", o: ["Dòng 1", "Dòng 2", "Dòng 3", "Dòng 4"], a: 1 },
+        { section: "II. Ký âm và Khuông nhạc", q: "Khóa Fa xác định nốt Fa nằm ở dòng kẻ thứ mấy?", o: ["Dòng 2", "Dòng 3", "Dòng 4", "Dòng 5"], a: 2 },
+        { section: "II. Ký âm và Khuông nhạc", q: "Khóa Đô Alto xác định nốt Đô ở dòng kẻ nào?", o: ["Dòng 1", "Dòng 2", "Dòng 3", "Dòng 4"], a: 2 },
+
+        // III. Hệ thống Bình quân và Dấu hóa
+        { section: "III. Hệ thống Bình quân và Dấu hóa", q: "Trong hệ thống bình quân, một quãng tám được chia thành bao nhiêu phần bằng nhau?", o: ["7 phần", "12 phần (12 nửa cung)", "24 phần", "10 phần"], a: 1 },
+        { section: "III. Hệ thống Bình quân và Dấu hóa", q: "Khoảng cách hẹp nhất giữa hai bậc của thang âm cơ bản là gì?", o: ["Một cung", "Nửa cung", "1/4 cung", "Một quãng tám"], a: 1 },
+        { section: "III. Hệ thống Bình quân và Dấu hóa", q: "Giữa các bậc cơ bản Mi - Fa và Si - Đô là khoảng cách gì?", o: ["Một cung", "Nửa cung", "Một cung rưỡi", "Hai cung"], a: 1 },
+        { section: "III. Hệ thống Bình quân và Dấu hóa", q: "Dấu thăng (#) có tác dụng gì?", o: ["Hạ thấp nốt nhạc 1/2 cung", "Nâng cao nốt nhạc 1/2 cung", "Hủy bỏ dấu hóa trước đó", "Nâng cao nốt nhạc 1 cung"], a: 1 },
+        { section: "III. Hệ thống Bình quân và Dấu hóa", q: "Dấu giáng (b) có tác dụng gì?", o: ["Hạ thấp nốt nhạc 1/2 cung", "Nâng cao nốt nhạc 1/2 cung", "Hạ thấp nốt nhạc 1 cung", "Giữ nguyên cao độ"], a: 0 },
+        { section: "III. Hệ thống Bình quân và Dấu hóa", q: "Trùng âm là gì?", o: ["Hai âm thanh khác nhau hoàn toàn", "Các bậc âm có cùng độ cao nhưng khác tên gọi và ký hiệu", "Hai âm thanh có tên gọi giống nhau nhưng độ cao khác nhau", "Âm thanh lặp lại của một nốt"], a: 1 },
+        { section: "III. Hệ thống Bình quân và Dấu hóa", q: "Nửa cung Diatonic là gì?", o: ["Nửa cung tạo bởi 2 bậc cùng tên", "Nửa cung tạo bởi 2 bậc cơ bản liền kề hoặc khác tên", "Nửa cung lớn hơn bình thường", "Nửa cung nhỏ hơn bình thường"], a: 1 },
+        { section: "III. Hệ thống Bình quân và Dấu hóa", q: "Nửa cung Chromatic là gì?", o: ["Nửa cung tạo bởi 2 bậc cùng tên", "Nửa cung tạo bởi 2 bậc khác tên", "Khoảng cách giữa Mi và Fa", "Khoảng cách giữa Si và Đô"], a: 0 },
+
+        // IV. Trường độ và Nhịp điệu
+        { section: "IV. Trường độ và Nhịp điệu", q: "Dấu chấm dôi đặt bên phải nốt nhạc có tác dụng gì?", o: ["Làm nốt nhạc đẹp hơn", "Tăng thêm một nửa giá trị trường độ của chính nốt đó", "Tăng gấp đôi trường độ nốt đó", "Ngắt âm thanh ngay lập tức"], a: 1 },
+        { section: "IV. Trường độ và Nhịp điệu", q: "Dấu nối (cùng cao độ) dùng để làm gì?", o: ["Nối liền hai nốt khác cao độ để hát luyến", "Nối liền hai nốt có cùng cao độ để kéo dài trường độ", "Ngắt tiếng giữa hai nốt", "Tăng cường độ của nốt sau"], a: 1 },
+        { section: "IV. Trường độ và Nhịp điệu", q: "Dấu miễn nhịp (Fermata) có ý nghĩa gì?", o: ["Nghỉ bao lâu tùy ý người chỉ huy hoặc người biểu diễn", "Nghỉ đúng 1 phách", "Tăng tốc độ bản nhạc", "Kết thúc bản nhạc ngay lập tức"], a: 0 },
+        { section: "IV. Trường độ và Nhịp điệu", q: "Nhịp điệu (Rhythm) là gì?", o: ["Sự chuyển động nhanh hay chậm của bản nhạc", "Sự nối tiếp các độ dài của âm thanh có tổ chức", "Độ vang to nhỏ của âm thanh", "Màu sắc của âm thanh"], a: 1 },
+        { section: "IV. Trường độ và Nhịp điệu", q: "Trong một ô nhịp, phách có trọng âm gọi là gì?", o: ["Phách nhẹ", "Phách mạnh", "Đảo phách", "Nghịch phách"], a: 1 },
+        { section: "IV. Trường độ và Nhịp điệu", q: "Số chỉ nhịp 2/4 có ý nghĩa gì?", o: ["Có 2 phách, mỗi phách bằng 1 nốt trắng", "Có 4 phách, mỗi phách bằng 1 nốt đen", "Có 2 phách, mỗi phách bằng 1 nốt đen", "Có 2 phách, mỗi phách bằng 1 nốt móc đơn"], a: 2 },
+        { section: "IV. Trường độ và Nhịp điệu", q: "Nhịp 3/4 có tính chất như thế nào?", o: ["Nhịp đơn, 3 phách: Mạnh - Nhẹ - Nhẹ", "Nhịp kép, 3 phách: Mạnh - Mạnh vừa - Nhẹ", "Nhịp đơn, 2 phách", "Nhịp hỗn hợp"], a: 0 },
+        { section: "IV. Trường độ và Nhịp điệu", q: "Nhịp 4/4 (C) gồm các phách có tính chất như thế nào?", o: ["Mạnh - Nhẹ - Nhẹ - Nhẹ", "Mạnh - Nhẹ - Mạnh vừa - Nhẹ", "Mạnh - Mạnh - Mạnh - Mạnh", "Nhẹ - Mạnh - Nhẹ - Mạnh"], a: 1 },
+
+        // V. Các ký hiệu và Thuật ngữ Nhịp độ
+        { section: "V. Các ký hiệu và Thuật ngữ Nhịp độ", q: "Vạch nhịp kép (Double bar line) dùng để làm gì?", o: ["Chỉ dùng để kết thúc bài", "Báo hiệu thay đổi loại nhịp, khóa nhạc hoặc kết đoạn", "Chia đôi ô nhịp", "Không có tác dụng gì đặc biệt"], a: 1 },
+        { section: "V. Các ký hiệu và Thuật ngữ Nhịp độ", q: "Nhịp lấy đà (Up-beat) là hiện tượng gì?", o: ["Bản nhạc kết thúc bằng ô nhịp thiếu", "Bản nhạc bắt đầu với ô nhịp không đủ số phách quy định", "Bản nhạc có tốc độ rất nhanh", "Người chỉ huy đánh nhịp trước khi hát"], a: 1 },
+        { section: "V. Các ký hiệu và Thuật ngữ Nhịp độ", q: "Hiện tượng đảo phách (Syncopation) là gì?", o: ["Trọng âm rơi vào phách mạnh", "Trọng âm chuyển từ phách mạnh sang phách nhẹ", "Hát sai nhịp", "Thay đổi số chỉ nhịp liên tục"], a: 1 },
+        { section: "V. Các ký hiệu và Thuật ngữ Nhịp độ", q: "Thuật ngữ 'Largo' có nghĩa là gì?", o: ["Rất nhanh", "Hơi nhanh", "Cực chậm, rộng rãi", "Vừa phải"], a: 2 },
+        { section: "V. Các ký hiệu và Thuật ngữ Nhịp độ", q: "Thuật ngữ 'Andante' chỉ tốc độ nào?", o: ["Nhanh vui", "Chậm vừa (như bước đi)", "Rất nhanh", "Hơi chậm"], a: 1 },
+        { section: "V. Các ký hiệu và Thuật ngữ Nhịp độ", q: "Thuật ngữ 'Allegro' chỉ tốc độ nào?", o: ["Chậm", "Vừa phải", "Nhanh", "Rất chậm"], a: 2 },
+        { section: "V. Các ký hiệu và Thuật ngữ Nhịp độ", q: "Thuật ngữ 'Ritardando' (rit.) có nghĩa là gì?", o: ["Nhanh dần lên", "Chậm dần lại", "Giữ nguyên tốc độ", "Quay lại từ đầu"], a: 1 },
+        { section: "V. Các ký hiệu và Thuật ngữ Nhịp độ", q: "Dấu hồi (Segno) dùng để làm gì?", o: ["Kết thúc bài", "Nhắc lại từ vị trí có dấu Segno", "Tăng âm lượng", "Giảm âm lượng"], a: 1 },
+        { section: "V. Các ký hiệu và Thuật ngữ Nhịp độ", q: "Dấu Coda thường đi kèm với dấu nào để chỉ phần kết?", o: ["Dấu nhắc lại", "Dấu hồi (Segno) hoặc Da Capo", "Dấu luyến", "Dấu thăng"], a: 1 }
+    ];
+
+    let userAnswers = {};
+    let timerInterval;
+    let seconds = 0;
+
+    function startQuiz() {
+        document.getElementById('start-screen').classList.remove('active');
+        document.getElementById('quiz-screen').classList.add('active');
+        renderQuestions();
+        startTimer();
+    }
+
+    function renderQuestions() {
+        const container = document.getElementById('quiz-container');
+        container.innerHTML = '';
+        
+        let currentSection = '';
+
+        quizData.forEach((item, index) => {
+            // Thêm tiêu đề Section nếu thay đổi
+            if (item.section !== currentSection) {
+                const sectionHeader = document.createElement('div');
+                sectionHeader.className = 'section-title';
+                sectionHeader.innerText = item.section;
+                container.appendChild(sectionHeader);
+                currentSection = item.section;
+            }
+
+            const qBox = document.createElement('div');
+            qBox.className = 'question-box';
+            
+            let optionsHtml = '';
+            item.o.forEach((opt, optIndex) => {
+                optionsHtml += `
+                    <label onclick="selectOption(this, ${index})">
+                        <input type="radio" name="q_${index}" value="${optIndex}" onchange="saveAnswer(${index}, ${optIndex})">
+                        ${opt}
+                    </label>
+                `;
+            });
+
+            qBox.innerHTML = `
+                <div class="question-header">Câu ${index + 1}: ${item.q}</div>
+                <div class="options">${optionsHtml}</div>
+            `;
+            container.appendChild(qBox);
+        });
+    }
+
+    function selectOption(label, questionIndex) {
+        // Xóa class selected ở các label khác trong cùng câu hỏi
+        const allLabels = label.parentElement.querySelectorAll('label');
+        allLabels.forEach(l => l.classList.remove('selected'));
+        // Thêm class selected vào label được chọn
+        label.classList.add('selected');
+    }
+
+    function saveAnswer(qIndex, ansIndex) {
+        userAnswers[qIndex] = ansIndex;
+        // Cập nhật thanh tiến độ
+        const answeredCount = Object.keys(userAnswers).length;
+        document.getElementById('question-progress').innerText = `Tiến độ: ${answeredCount}/${quizData.length}`;
+    }
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('timer').innerText = `⏱️ ${mins}:${secs}`;
+        }, 1000);
+    }
+
+    function submitQuiz() {
+        if (!confirm("Bạn có chắc chắn muốn nộp bài không?")) return;
+
+        clearInterval(timerInterval);
+        
+        let score = 0;
+        let wrongAnswersHtml = '';
+        
+        quizData.forEach((q, index) => {
+            const userPick = userAnswers[index];
+            const isCorrect = userPick === q.a;
+            
+            if (isCorrect) {
+                score++;
+            } else {
+                const userText = userPick !== undefined ? q.o[userPick] : "<span style='color:gray'>Chưa trả lời</span>";
+                const correctText = q.o[q.a];
+                
+                wrongAnswersHtml += `
+                    <div class="review-item">
+                        <div class="review-question">Câu ${index + 1}: ${q.q}</div>
+                        <div class="ans-row">❌ Bạn chọn: <span class="your-ans">${userText}</span></div>
+                        <div class="ans-row">✅ Đáp án đúng: <span class="correct-ans">${correctText}</span></div>
+                        <div class="explanation">💡 <b>Ghi nhớ:</b> ${correctText}</div>
+                    </div>
+                `;
+            }
+        });
+
+        // Tính điểm và hiển thị
+        const percent = Math.round((score / quizData.length) * 100);
+        
+        // Logic lời khuyên
+        let advice = "";
+        let colorVar = "";
+        
+        if (percent === 100) {
+            advice = "Tuyệt vời! Bạn đã nắm vững toàn bộ kiến thức lý thuyết cơ bản. Bạn đã sẵn sàng cho các kỳ thi nâng cao hơn!";
+            colorVar = "var(--success)";
+        } else if (percent >= 80) {
+            advice = "Rất tốt! Bạn có nền tảng kiến thức vững chắc. Hãy xem lại những lỗi sai nhỏ ở dưới để đạt điểm tuyệt đối nhé.";
+            colorVar = "var(--primary)";
+        } else if (percent >= 50) {
+            advice = "Kết quả tạm ổn. Bạn đã hiểu các khái niệm cơ bản nhưng vẫn còn nhầm lẫn ở một số định nghĩa chi tiết. Hãy ôn lại kỹ phần 'Hệ thống bình quân' và 'Các thuật ngữ nhịp độ'.";
+            colorVar = "var(--warning)";
+        } else {
+            advice = "Bạn cần cố gắng nhiều hơn. Có vẻ như bạn chưa nắm chắc các định nghĩa cơ bản về cao độ, trường độ và ký âm. Hãy dành thời gian đọc lại giáo trình và làm lại bài trắc nghiệm này.";
+            colorVar = "var(--danger)";
+        }
+
+        document.getElementById('quiz-screen').classList.remove('active');
+        document.getElementById('result-screen').classList.add('active');
+        
+        document.getElementById('final-score').innerText = score;
+        document.getElementById('result-text').innerText = `${percent}% - ${score >= 32 ? 'Đạt Yêu Cầu' : 'Cần Cố Gắng'}`;
+        document.getElementById('advice-text').innerText = advice;
+        
+        // Vẽ biểu đồ tròn css
+        const circle = document.getElementById('score-circle-graphic');
+        circle.style.background = `conic-gradient(${colorVar} ${percent}%, #e9ecef ${percent}%)`;
+        document.getElementById('final-score').style.color = colorVar;
+
+        const reviewList = document.getElementById('wrong-answers-list');
+        if (wrongAnswersHtml === '') {
+            reviewList.innerHTML = '<p style="text-align:center; color:green; font-weight:bold; font-size:1.2em;">🎉 Xuất sắc! Bạn không sai câu nào.</p>';
+        } else {
+            reviewList.innerHTML = wrongAnswersHtml;
+        }
+
+        window.scrollTo(0, 0);
+    }
+</script>
+
+</body>
+</html>
